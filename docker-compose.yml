@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  fastapi:
+    build: .
+    container_name: fastapi-backend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /etc/localtime:/etc/localtime:ro
+    command: >
+      uvicorn main:app --reload --host 0.0.0.0 --port 60000
+    ports:
+      - "60000"
+    networks:
+      - app-network
+
+  webserver:
+    depends_on:
+      - fastapi
+    image: nginx:1.15.12-alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "60000:80"
+    volumes:
+      - ./nginx-conf:/etc/nginx/conf.d
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
