@@ -1,21 +1,46 @@
 from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 
 app = FastAPI()
 
 access={}
 access_cors={}
 
+"""
+        proxy_set_header   Host               $host;
+        proxy_set_header   X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Real-IP          $remote_addr;
+        proxy_set_header   X-Forwarded-Proto  $scheme;
+{
+  "Hello": "GET",
+  "IP": "172.19.0.3",
+  "headers": {
+    "x-forwarded-for": "27.33.198.223, 172.19.0.1",
+    "host": "nginx.myminda.com",
+    "connection": "close",
+    "x-real-ip": "27.33.198.223",
+    "x-forwarded-proto": "http",
+    "accept": "*/*",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36",
+    "content-type": "application/x-www-form-urlencoded",
+    "origin": "http://resttesttest.com",
+    "referer": "http://resttesttest.com/",
+    "accept-encoding": "gzip, deflate",
+    "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,la;q=0.6"
+  }
+}
+"""
 
 @app.get("/")
-def get():
+def get(request: Request):
     global access
+    client_host = request.client.host
     if 'get' in access:
         del access['get']
         0 / 0
     access['get'] = True
-    return {"Hello": "GET"}
+    return {"Hello": "GET", "IP": client_host, "real ip": request.headers["x-real-ip"], "headers" : request.headers}
 
 @app.post("/")
 def post():
