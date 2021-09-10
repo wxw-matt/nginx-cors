@@ -124,3 +124,9 @@ def cors_head():
         0 / 0
     access_cors['head'] = True
     return {"Hello cors": "HEAD"}
+
+@app.post("/myhook")
+async def post(request: Request):
+    print("myhook:")
+    print(await request.json())
+    return {"Hello": "POST"}
