@@ -128,5 +128,6 @@ def cors_head():
 @app.post("/myhook")
 async def post(request: Request):
     print("myhook:")
+    print(await request.body())
     print(await request.json())
     return {"Hello": "POST"}
